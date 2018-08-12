@@ -54,7 +54,7 @@ def callback_handler(call):
         edit_business = call.data
         bot.send_message(call.from_user.id, 'Вы выбрали дело "{}"'.format(call.data), reply_markup=markup)
         condition[call.from_user.id] = config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE
-
+        business_handler(call)
     elif condition[call.from_user.id] == config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE:
         business[call.from_user.id].remove(edit_business)
         business_handler(call)
