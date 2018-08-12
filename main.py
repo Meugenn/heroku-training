@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-
+import os
 import telebot
 import config
-import bot_token
+from bot_token import TOKEN
 import mysql
+from flask import Flask, request
 
-bot = telebot.TeleBot(bot_token.TOKEN)
 
+bot = telebot.TeleBot(TOKEN)
+server = Flask(__name__)
 
 
 
@@ -105,8 +107,18 @@ def new_business(message):
 
 # @bot.message_handler(func=lambda message: condition[message.chat.id]  == config.Waiting.WAITING_LIST.value)
 
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://telegram-bot-to-do.herokuapp.com/' + TOKEN)
+    return "!", 200
 
 
 if __name__ == "__main__":
-    bot.polling(none_stop=True)
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
