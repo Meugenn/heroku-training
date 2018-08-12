@@ -31,13 +31,13 @@ def start_handler(message):
     business_handler(message)
 
 
-edit_business = None
+# edit_business = None
 
 
 @bot.callback_query_handler(func=lambda call: True)  #Ответ на кнопки /business
 def callback_handler(call):
 
-    global edit_business
+    # global edit_business
     if call.data == "Новое дело":
 
         bot.send_message(call.from_user.id, 'Введите название дела')
@@ -50,14 +50,16 @@ def callback_handler(call):
         condition[call.from_user.id] = config.Waiting.EDIT_BUSINESS.value
 
     elif condition[call.from_user.id] == config.Waiting.EDIT_BUSINESS.value:
-        markup = config.create_markup(('Удалить', ))
-        edit_business = call.data
-        bot.send_message(call.from_user.id, 'Вы выбрали дело "{}"'.format(call.data), reply_markup=markup)
-        condition[call.from_user.id] = config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE
+        # markup = config.create_markup(('Удалить', ))
+        # edit_business = call.data
+        business[call.from_user.id].remove(call.data)
+        bot.send_message(call.from_user.id, 'Дело удалено')
+        #condition[call.from_user.id] = config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE
         business_handler(call)
-    elif condition[call.from_user.id] == config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE:
-        business[call.from_user.id].remove(edit_business)
-        business_handler(call)
+
+    # elif condition[call.from_user.id] == config.Waiting.EDIT_BUSINESS_WAITING_RESPONSE:
+    #     business[call.from_user.id].remove(edit_business)
+    #     business_handler(call)
 
 
 
